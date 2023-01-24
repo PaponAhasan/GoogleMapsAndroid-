@@ -3,18 +3,31 @@ package com.example.mapview
 import androidx.fragment.app.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.navArgs
+import com.example.mapview.models.UserMaps
 
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 
+private const val TAG = "DisplayMapFragment"
+
 class DisplayMapFragment : Fragment() {
+
+    private val args: DisplayMapFragmentArgs by navArgs()
+    private lateinit var userMap: UserMaps
+
+    companion object {
+
+    }
 
     private val callback = OnMapReadyCallback { googleMap ->
         /**
@@ -26,9 +39,19 @@ class DisplayMapFragment : Fragment() {
          * install it inside the SupportMapFragment. This method will only be triggered once the
          * user has installed Google Play services and returned to the app.
          */
-        val sydney = LatLng(-34.0, 151.0)
-        googleMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))
+
+        userMap = args.usermap
+        val boundsBuilder = LatLngBounds.builder()
+        for (place in userMap.places) {
+            val latLng = LatLng(place.latitude, place.longitude)
+            boundsBuilder.include(latLng)
+            googleMap.addMarker(
+                MarkerOptions().position(latLng).title(place.title).snippet(place.description)
+            )
+        }
+        Log.e(TAG, "User location title: ${userMap.title}")
+        googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 1000, 1000, 0))
+        //googleMap.moveCamera(CameraUpdateFactory.newLatLngBounds(boundsBuilder.build(), 1000, 1000, 0))
     }
 
     override fun onCreateView(

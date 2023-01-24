@@ -9,10 +9,18 @@
         android:id="@+id/homeFragment"
         android:name="com.example.mapview.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_displayMapFragment"
+            app:destination="@id/displayMapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/displayMapFragment"
         android:name="com.example.mapview.DisplayMapFragment"
         android:label="fragment_display_map"
-        tools:layout="@layout/fragment_display_map" />
+        tools:layout="@layout/fragment_display_map" >
+        <argument
+            android:name="usermap"
+            app:argType="com.example.mapview.models.UserMaps" />
+    </fragment>
 </navigation>
